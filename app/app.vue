@@ -40,7 +40,9 @@ const faq = [
   { q: 'Quanto tempo dura a primeira consulta?', a: 'Em média 50 minutos, para conhecer seu histórico com calma.' },
   { q: 'Posso remarcar?', a: 'Sim, com até 24 horas de antecedência, pelo WhatsApp.' },
   { q: 'Tem teleconsulta?', a: 'Sim, para retornos e orientações. A primeira consulta é preferencialmente presencial.' },
+  { q: 'Preciso levar exames?', a: 'Traga os exames dos últimos 12 meses e a lista dos remédios que você usa. Se não tiver, tudo bem: pedimos o que for preciso.' },
 ]
+const receita = ref(0)
 
 const aberto = ref<number | null>(0)
 const trilho = ref<HTMLElement | null>(null)
@@ -174,8 +176,19 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
       <section id="duvidas" class="sec">
         <div class="wrap faq-grid">
           <div class="faq">
-            <h2 class="h2">Dúvidas rápidas</h2>
-            <details v-for="f in faq" :key="f.q"><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>
+            <h2 class="h2">Perguntas que chegam ao consultório</h2>
+            <div class="rx-abas" role="tablist" aria-label="Perguntas">
+              <button v-for="(f, i) in faq" :key="f.q" type="button" role="tab" :aria-selected="receita === i" :class="{ on: receita === i }" @click="receita = i">{{ f.q }}</button>
+            </div>
+            <article class="rx" role="tabpanel" aria-live="polite">
+              <header class="rx-topo">
+                <span><b>{{ site.marca }}</b><small>{{ site.profissional }} · {{ site.especialidade }}</small></span>
+                <span class="rx-simbolo" aria-hidden="true">℞</span>
+              </header>
+              <p class="rx-q">{{ faq[receita].q }}</p>
+              <Transition name="rx" mode="out-in"><p :key="receita" class="rx-a">{{ faq[receita].a }}</p></Transition>
+              <footer class="rx-assina"><span class="rx-linha" aria-hidden="true" /><span>{{ site.profissional }} · {{ site.registro }}</span></footer>
+            </article>
           </div>
           <div class="contact">
             <p class="k">Agende agora</p>
