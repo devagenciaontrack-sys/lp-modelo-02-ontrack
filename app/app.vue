@@ -112,6 +112,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
           </div>
           <div class="hero-card">
             <img class="ph ph-portrait hero-img" :src="`${base}fotos/acompanhamento.webp`" width="1200" height="801" alt="Profissional de saúde atendendo uma criança acompanhada da mãe" fetchpriority="high">
+            <div class="hero-3d" title="Arraste para girar"><Icone3D tipo="coracao" /></div>
             <div class="atend">
               <p class="atend-status" :class="{ aberto: status?.aberto }"><i />{{ status?.texto || 'Atendimento com hora marcada' }}</p>
               <ul>
@@ -142,16 +143,24 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
       <!-- SOBRE -->
       <section class="sec about">
         <div class="wrap about-grid">
-          <img class="ph ph-about about-img" :src="`${base}fotos/teleconsulta.webp`" width="1200" height="800" alt="Médico em atendimento por vídeo no consultório" loading="lazy">
-          <div>
+          <figure class="about-foto">
+            <img class="ph ph-about about-img" :src="`${base}fotos/teleconsulta.webp`" width="1200" height="800" alt="Médico em atendimento por vídeo no consultório" loading="lazy">
+            <figcaption class="about-selo"><b>{{ site.registro }}</b><span>Registro ativo no conselho</span></figcaption>
+          </figure>
+          <div class="about-txt">
             <p class="k">{{ site.especialidade }}</p>
             <h2 class="h2">{{ site.profissional }}</h2>
-            <p class="reg">{{ site.registro }}</p>
-            <p class="bio">Formação em [universidade], residência em [instituição] e mais de [00] anos de atendimento. Acredito em medicina feita com tempo, evidência e conversa franca.</p>
+            <blockquote class="about-frase">“Acredito em medicina feita com tempo, evidência e conversa franca.”</blockquote>
+            <p class="bio">Formação em [universidade], residência em [instituição] e mais de [00] anos de atendimento. Cada consulta começa ouvindo a sua história, sem pressa.</p>
+            <ul class="formacao">
+              <li><span>Graduação</span><b>[Universidade]</b></li>
+              <li><span>Residência</span><b>[Instituição]</b></li>
+              <li><span>Membro</span><b>[Sociedade médica]</b></li>
+            </ul>
             <ul class="creds">
               <li><b>00+</b><span>anos de experiência</span></li>
               <li><b>0.000+</b><span>pacientes atendidos</span></li>
-              <li><b>Membro</b><span>[Sociedade médica]</span></li>
+              <li><b>{{ site.nota }}</b><span>nota no Google</span></li>
             </ul>
           </div>
         </div>

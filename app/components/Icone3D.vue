@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Ilustração 3D leve (Zdog) para os diferenciais. Balança devagar e pode ser girada arrastando.
 // Só anima quando está visível na tela; fica parada para quem prefere menos movimento.
-const props = defineProps<{ tipo: 'relogio' | 'capsula' | 'celular' | 'prancheta' }>()
+const props = defineProps<{ tipo: 'relogio' | 'capsula' | 'celular' | 'prancheta' | 'coracao' }>()
 const canvas = ref<HTMLCanvasElement | null>(null)
 let parar = () => {}
 
@@ -70,11 +70,26 @@ onMounted(async () => {
     new Zdog.RoundedRect({ addTo: illo, width: 16, height: 7, cornerRadius: 2, translate: { y: -24, z: 3 }, stroke: 2, fill: true, color: C.teal })
   }
 
+  let orbita: any = null
+  if (props.tipo === 'coracao') {
+    // coração "estofado": contorno grosso e preenchido, com profundidade em camadas
+    const caminho = [{ x: 0, y: -8 }, { bezier: [{ x: -4, y: -18 }, { x: -22, y: -16 }, { x: -20, y: -2 }] }, { bezier: [{ x: -18, y: 8 }, { x: -6, y: 14 }, { x: 0, y: 20 }] }, { bezier: [{ x: 6, y: 14 }, { x: 18, y: 8 }, { x: 20, y: -2 }] }, { bezier: [{ x: 22, y: -16 }, { x: 4, y: -18 }, { x: 0, y: -8 }] }]
+    for (const [z, cor] of [[-4, C.teal], [-2, C.teal2], [0, C.teal2], [2, C.teal2], [4, '#1E7A80']]) new Zdog.Shape({ addTo: illo, path: caminho, translate: { z }, stroke: 6, fill: true, color: cor })
+    new Zdog.Shape({ addTo: illo, path: [{ x: -9, y: -10 }, { bezier: [{ x: -14, y: -11 }, { x: -16, y: -6 }, { x: -15, y: -3 }] }], translate: { z: 8 }, stroke: 3, color: 'rgba(255,255,255,.55)', closed: false })
+    // linha de batimento na frente do coração
+    new Zdog.Shape({ addTo: illo, path: [{ x: -16, y: 2 }, { x: -7, y: 2 }, { x: -4, y: -6 }, { x: 0, y: 9 }, { x: 4, y: -2 }, { x: 7, y: 2 }, { x: 16, y: 2 }], translate: { z: 8 }, stroke: 2.4, color: C.mint, closed: false })
+    // órbita com um ponto girando
+    orbita = new Zdog.Group({ addTo: illo, rotate: { x: TAU / 2.6 } })
+    new Zdog.Ellipse({ addTo: orbita, diameter: 64, stroke: 1, color: 'rgba(14,59,63,.25)' })
+    new Zdog.Shape({ addTo: orbita, translate: { x: 32 }, stroke: 5, color: C.mint })
+    new Zdog.Shape({ addTo: orbita, translate: { x: -32 }, stroke: 3.5, color: C.teal2 })
+  }
+
   let t = Math.random() * 6
   let visivel = false
   let quadro = 0
   const desenhar = () => {
-    if (!arrastando && !reduzido) { t += 0.012; illo.rotate.y = 0.5 + Math.sin(t) * 0.55 }
+    if (!arrastando && !reduzido) { t += 0.012; illo.rotate.y = 0.5 + Math.sin(t) * 0.55; if (orbita) orbita.rotate.z += 0.02 }
     illo.updateRenderGraph()
     quadro = visivel ? requestAnimationFrame(desenhar) : 0
   }

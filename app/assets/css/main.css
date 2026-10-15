@@ -240,3 +240,39 @@ img.ph, .tr-painel img, .tr-lista img{ height:auto; }
 .card-3d :deep(canvas), .card-3d canvas{ position:relative; z-index:1; }
 .card h3, .card p{ padding-inline:8px; }
 @media (max-width:640px){ .card{ display:grid; grid-template-columns:96px 1fr; column-gap:14px; align-items:center; padding:12px; } .card-3d{ grid-row:span 2; margin:0; } .card h3, .card p{ padding-inline:0; } }
+
+/* ===== v5: cores refinadas, coração 3D, médico, tratamentos alinhados ===== */
+:root{ --ice:#F1F6F5; --teal:#0C3A3F; --teal-2:#15626A; --mint:#6FDCC9; --mint-soft:#DFF4EF; --ink:#0B2A2E; --muted:#58706F; }
+.hero{ background:radial-gradient(60% 70% at 85% 30%, rgba(111,220,201,.18), transparent 70%), var(--ice); }
+
+/* coração 3D no canto da foto */
+.hero-3d{ position:absolute; z-index:3; top:-46px; right:-46px; width:150px; padding:6px; border-radius:50%; background:radial-gradient(closest-side, #FFFFFF 62%, rgba(255,255,255,.6) 78%, transparent 100%); filter:drop-shadow(0 18px 24px rgba(12,58,63,.22)); }
+@media (max-width:640px){ .hero-3d{ width:104px; top:-30px; right:-6px; } }
+
+/* médico */
+.about{ background:linear-gradient(160deg, #0F4449 0%, var(--teal) 55%, #082B2F 100%); }
+.about-grid{ align-items:center; }
+.about-foto{ position:relative; margin:0; }
+.about-img{ border-radius:28px; box-shadow:0 40px 60px -40px rgba(0,0,0,.6); }
+.about-selo{ position:absolute; left:-18px; bottom:28px; display:grid; padding:14px 18px; border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 20px 40px -20px rgba(0,0,0,.5); }
+.about-selo b{ font-size:15px; } .about-selo span{ font-size:12.5px; color:var(--muted); }
+.about-txt{ display:grid; gap:6px; }
+.about-frase{ margin:14px 0 6px; padding-left:18px; border-left:3px solid var(--mint); font-size:clamp(20px, 2vw, 24px); line-height:1.4; font-weight:500; letter-spacing:-.01em; color:#fff; }
+.about .bio{ color:rgba(255,255,255,.75); max-width:52ch; }
+.formacao{ list-style:none; margin:18px 0 0; padding:0; display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.formacao li{ display:grid; gap:2px; padding:14px 16px; border-radius:16px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); }
+.formacao span{ font-size:12.5px; color:var(--mint); font-weight:600; } .formacao b{ font-size:15px; color:#fff; }
+.creds{ margin-top:18px; }
+@media (max-width:640px){ .formacao{ grid-template-columns:1fr; } .about-selo{ left:12px; bottom:12px; } }
+
+/* tratamentos: lista e painel com a mesma altura, itens iguais */
+@media (min-width:900px){
+  .tr-vitrine{ align-items:stretch; }
+  .tr-lista{ grid-auto-rows:1fr; height:100%; }
+  .tr-lista li{ display:flex; }
+  .tr-lista button{ height:100%; }
+  .tr-painel{ align-self:stretch; display:flex; flex-direction:column; }
+  .tr-painel img{ flex:1 1 auto; min-height:220px; aspect-ratio:auto; height:0; }
+}
+.tr-lista button{ min-height:76px; }
+.tr-lista img{ width:72px; height:56px; }
