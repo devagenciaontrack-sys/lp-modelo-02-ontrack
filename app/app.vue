@@ -23,12 +23,13 @@ const diferenciais = [
   { t: 'Plano por escrito', d: 'Você sai com o tratamento explicado e os próximos passos claros.', i: 'doc' },
 ]
 const tratamentos = [
-  { t: 'Consulta de avaliação', d: 'Primeira conversa completa: histórico, exame clínico e plano inicial. Duração média de 50 minutos.' },
-  { t: 'Acompanhamento contínuo', d: 'Retornos periódicos para ajustar o tratamento conforme a sua evolução.' },
-  { t: 'Check-up preventivo', d: 'Avaliação anual com exames direcionados ao seu perfil e à sua idade.' },
-  { t: 'Teleconsulta', d: 'Atendimento por vídeo para retornos e orientações, sem sair de casa.' },
-  { t: 'Procedimentos em consultório', d: 'Pequenos procedimentos realizados no próprio consultório, com segurança.' },
+  { t: 'Consulta de avaliação', d: 'Primeira conversa completa: histórico, exame clínico e plano inicial, sem pressa.', dur: '50 min', modo: 'Presencial', img: 'avaliacao.webp' },
+  { t: 'Acompanhamento contínuo', d: 'Retornos periódicos para ajustar o tratamento conforme a sua evolução, para você e para a família.', dur: '30 min', modo: 'Presencial ou vídeo', img: 'acompanhamento.webp' },
+  { t: 'Check-up preventivo', d: 'Avaliação anual com exames direcionados ao seu perfil e à sua idade.', dur: '60 min', modo: 'Presencial', img: 'checkup.webp' },
+  { t: 'Teleconsulta', d: 'Atendimento por vídeo para retornos e orientações, sem sair de casa.', dur: '30 min', modo: 'Por vídeo', img: 'teleconsulta.webp' },
+  { t: 'Procedimentos em consultório', d: 'Pequenos procedimentos feitos no próprio consultório, com segurança e conforto.', dur: 'Varia', modo: 'Presencial', img: 'consultorio.webp' },
 ]
+const base = useRuntimeConfig().app.baseURL
 const depoimentos = [
   { n: 'Mariana S.', c: 'Paciente desde 2023', t: 'Pela primeira vez saí de uma consulta entendendo exatamente o que eu tinha e o que fazer.' },
   { n: 'Roberto A.', c: 'Check-up anual', t: 'Atendimento pontual, explicação clara e retorno rápido pelo WhatsApp quando precisei.' },
@@ -90,7 +91,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
             </div>
           </div>
           <div class="hero-card">
-            <div class="ph ph-portrait"><span>Foto do profissional</span></div>
+            <img class="ph ph-portrait hero-img" :src="`${base}fotos/acompanhamento.webp`" width="1200" height="801" alt="Profissional de saúde atendendo uma criança acompanhada da mãe" fetchpriority="high">
             <div class="slot">
               <p class="slot-k">Próximos horários</p>
               <div class="slot-row"><span>Ter</span><b>09:30</b><b>14:00</b><b class="off">16:30</b></div>
@@ -118,7 +119,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
       <!-- SOBRE -->
       <section class="sec about">
         <div class="wrap about-grid">
-          <div class="ph ph-about"><span>Foto no consultório</span></div>
+          <img class="ph ph-about about-img" :src="`${base}fotos/teleconsulta.webp`" width="1200" height="800" alt="Médico em atendimento por vídeo no consultório" loading="lazy">
           <div>
             <p class="k">{{ site.especialidade }}</p>
             <h2 class="h2">{{ site.profissional }}</h2>
@@ -135,19 +136,31 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
 
       <!-- TRATAMENTOS -->
       <section id="tratamentos" class="sec">
-        <div class="wrap tr-grid">
-          <div>
-            <h2 class="h2">Tratamentos</h2>
-            <p class="muted">Toque em cada um para ver como funciona.</p>
-            <a class="btn btn-teal" :href="wa('Olá! Quero saber mais sobre os tratamentos.')" target="_blank" rel="noopener">Tirar dúvida</a>
+        <div class="wrap">
+          <div class="tr-head">
+            <div><h2 class="h2">Tratamentos</h2><p class="muted">Escolha um para ver como funciona.</p></div>
+            <a class="btn btn-line" :href="wa('Olá! Quero saber mais sobre os tratamentos.')" target="_blank" rel="noopener">Tirar dúvida</a>
           </div>
-          <div class="acc">
-            <div v-for="(t, i) in tratamentos" :key="t.t" class="acc-item" :class="{ open: aberto === i }">
-              <button type="button" :aria-expanded="aberto === i" @click="aberto = aberto === i ? null : i">
-                <span class="acc-n">{{ String(i + 1).padStart(2, '0') }}</span>{{ t.t }}<span class="acc-plus" />
-              </button>
-              <div class="acc-body"><p>{{ t.d }}</p></div>
-            </div>
+          <div class="tr-vitrine">
+            <ul class="tr-lista" role="tablist" aria-label="Tratamentos">
+              <li v-for="(t, i) in tratamentos" :key="t.t">
+                <button type="button" role="tab" :aria-selected="aberto === i" :class="{ on: aberto === i }" @click="aberto = i">
+                  <img :src="`${base}fotos/${t.img}`" width="96" height="64" alt="" loading="lazy">
+                  <span><b>{{ t.t }}</b><small>{{ t.dur }} · {{ t.modo }}</small></span>
+                </button>
+              </li>
+            </ul>
+            <Transition name="tr" mode="out-in">
+              <article :key="aberto ?? 0" class="tr-painel" role="tabpanel">
+                <img :src="`${base}fotos/${tratamentos[aberto ?? 0].img}`" width="1200" height="800" :alt="tratamentos[aberto ?? 0].t" loading="lazy">
+                <div class="tr-info">
+                  <h3>{{ tratamentos[aberto ?? 0].t }}</h3>
+                  <p>{{ tratamentos[aberto ?? 0].d }}</p>
+                  <dl><div><dt>Duração</dt><dd>{{ tratamentos[aberto ?? 0].dur }}</dd></div><div><dt>Formato</dt><dd>{{ tratamentos[aberto ?? 0].modo }}</dd></div></dl>
+                  <a class="btn btn-teal" :href="wa(`Olá! Quero agendar: ${tratamentos[aberto ?? 0].t}.`)" target="_blank" rel="noopener">Agendar este atendimento</a>
+                </div>
+              </article>
+            </Transition>
           </div>
         </div>
       </section>
@@ -175,11 +188,11 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
 
       <!-- FAQ + CONTATO -->
       <section id="duvidas" class="sec">
-        <div class="wrap faq-grid">
-          <div class="faq">
-            <h2 class="h2">Perguntas que chegam ao consultório</h2>
+        <div class="wrap">
+          <h2 class="h2 faq-tit">Perguntas que chegam ao consultório</h2>
+          <div class="faq-grid">
             <div class="rx-abas" role="tablist" aria-label="Perguntas">
-              <button v-for="(f, i) in faq" :key="f.q" type="button" role="tab" :aria-selected="receita === i" :class="{ on: receita === i }" @click="receita = i">{{ f.q }}</button>
+              <button v-for="(f, i) in faq" :key="f.q" type="button" role="tab" :aria-selected="receita === i" :class="{ on: receita === i }" @click="receita = i"><span class="rx-n" aria-hidden="true">{{ i + 1 }}</span>{{ f.q }}</button>
             </div>
             <article class="rx" role="tabpanel" aria-live="polite">
               <header class="rx-topo">
@@ -191,12 +204,10 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
               <footer class="rx-assina"><span class="rx-linha" aria-hidden="true" /><span>{{ site.profissional }} · {{ site.registro }}</span></footer>
             </article>
           </div>
-          <div class="contact">
-            <p class="k">Agende agora</p>
-            <h3>Fale com a recepção pelo WhatsApp.</h3>
-            <p>Respondemos em horário comercial. Para urgências, procure um pronto atendimento.</p>
-            <a class="btn btn-wa btn-lg" :href="wa()" target="_blank" rel="noopener"><svg><use href="#i-wa" /></svg> Agendar pelo WhatsApp</a>
+          <div class="contato-faixa">
+            <div><h3>Fale com a recepção pelo WhatsApp</h3><p>Respondemos em horário comercial. Para urgências, procure um pronto atendimento.</p></div>
             <p class="addr">{{ site.endereco }}<br>{{ site.telefone }}</p>
+            <a class="btn btn-wa btn-lg" :href="wa()" target="_blank" rel="noopener"><svg><use href="#i-wa" /></svg> Agendar pelo WhatsApp</a>
           </div>
         </div>
       </section>
@@ -214,7 +225,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
         </div>
       </div>
       <div class="wrap"><div class="rod-bot">
-        <span>© {{ new Date().getFullYear() }} {{ site.marca }}. Todos os direitos reservados.</span>
+        <span>© {{ new Date().getFullYear() }} {{ site.marca }}. Fotos de ambientação: Harrison Keely, Shixart1985, Intel Free Press e Stethoscopes, via Wikimedia Commons (CC BY e CC BY-SA).</span>
         <a class="rod-credit" href="https://www.ontrackagenciadigital.com.br/" target="_blank" rel="noopener">Desenvolvido por <b>OnTrack Agência Digital</b></a>
       </div></div>
     </footer>
