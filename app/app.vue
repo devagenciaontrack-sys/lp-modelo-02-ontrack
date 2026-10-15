@@ -51,6 +51,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
 
 <template>
   <div>
+    <a class="skip" href="#conteudo">Pular para o conteúdo</a>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <defs>
         <symbol id="i-ear" viewBox="0 0 24 24"><path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a2.5 2.5 0 0 1-5 0"/><path d="M10 9.5a2 2 0 0 1 4 0"/></symbol>
@@ -72,7 +73,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
       </div>
     </header>
 
-    <main>
+    <main id="conteudo">
       <!-- HERO -->
       <section class="hero">
         <svg class="pulse" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
