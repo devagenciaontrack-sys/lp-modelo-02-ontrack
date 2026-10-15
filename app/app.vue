@@ -98,7 +98,9 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
       <!-- HERO -->
       <section class="hero">
         <svg class="pulse" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 130 H420 l26-64 34 128 30-150 26 86 H760 l18-30 22 44 18-14 H1440" />
+          <defs><filter id="brilho" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
+          <path class="pulse-base" pathLength="1000" d="M0 130 H300 l14-20 14 34 12-14 H520 l20-70 26 150 26-170 22 96 16-22 H760 l12-18 14 30 12-12 H1000 l20-70 26 150 26-170 22 96 16-22 H1240 l12-18 14 30 12-12 H1440" />
+          <path class="pulse-traco" pathLength="1000" filter="url(#brilho)" d="M0 130 H300 l14-20 14 34 12-14 H520 l20-70 26 150 26-170 22 96 16-22 H760 l12-18 14 30 12-12 H1000 l20-70 26 150 26-170 22 96 16-22 H1240 l12-18 14 30 12-12 H1440" />
         </svg>
         <div class="wrap hero-grid">
           <div class="hero-copy">
@@ -112,7 +114,6 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
           </div>
           <div class="hero-card">
             <img class="ph ph-portrait hero-img" :src="`${base}fotos/acompanhamento.webp`" width="1200" height="801" alt="Profissional de saúde atendendo uma criança acompanhada da mãe" fetchpriority="high">
-            <div class="hero-3d" title="Arraste para girar"><Icone3D tipo="coracao" /></div>
             <div class="atend">
               <p class="atend-status" :class="{ aberto: status?.aberto }"><i />{{ status?.texto || 'Atendimento com hora marcada' }}</p>
               <ul>
