@@ -230,3 +230,13 @@ img.ph, .tr-painel img, .tr-lista img{ height:auto; }
 .card > *{ position:relative; }
 .card-ic{ transform:translateZ(30px); }
 .atend{ width:296px; } @media (max-width:640px){ .atend{ width:auto; } }
+
+/* ===== v4: diferenciais com ilustrações 3D (Zdog), sem inclinação ===== */
+.card::before{ display:none; }
+.card{ display:grid; gap:6px; padding:16px 16px 24px; }
+.card:hover{ transform:none; box-shadow:0 24px 40px -30px rgba(14,42,46,.35); }
+.card-3d{ position:relative; margin-bottom:14px; border-radius:18px; background:radial-gradient(70% 70% at 50% 45%, #FFFFFF 0%, var(--mint-soft) 100%); }
+.card-3d::after{ content:''; position:absolute; left:28%; right:28%; bottom:14%; height:10px; border-radius:50%; background:rgba(14,59,63,.12); filter:blur(6px); pointer-events:none; }
+.card-3d :deep(canvas), .card-3d canvas{ position:relative; z-index:1; }
+.card h3, .card p{ padding-inline:8px; }
+@media (max-width:640px){ .card{ display:grid; grid-template-columns:96px 1fr; column-gap:14px; align-items:center; padding:12px; } .card-3d{ grid-row:span 2; margin:0; } .card h3, .card p{ padding-inline:0; } }

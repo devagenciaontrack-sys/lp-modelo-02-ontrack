@@ -34,19 +34,13 @@ function calcularStatus() {
   }
 }
 
-// profundidade 3D leve (Vanilla-Tilt) só em mouse, e nunca para quem pede menos movimento
-onMounted(async () => {
-  calcularStatus()
-  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  const { default: VanillaTilt } = await import('vanilla-tilt')
-  VanillaTilt.init(document.querySelectorAll('[data-tilt]') as unknown as HTMLElement[], { max: 6, speed: 600, perspective: 1200, glare: true, 'max-glare': 0.12, scale: 1.01 })
-})
+onMounted(calcularStatus)
 
 const diferenciais = [
-  { t: 'Consulta sem pressa', d: 'Tempo de verdade para ouvir sua história antes de qualquer conduta.', i: 'ear' },
-  { t: 'Exames na hora certa', d: 'Pedimos só o que muda a decisão. Nada a mais, nada a menos.', i: 'scan' },
-  { t: 'Retorno pelo celular', d: 'Dúvidas depois da consulta respondidas pelo canal da clínica.', i: 'chat' },
-  { t: 'Plano por escrito', d: 'Você sai com o tratamento explicado e os próximos passos claros.', i: 'doc' },
+  { t: 'Consulta sem pressa', d: 'Tempo de verdade para ouvir sua história antes de qualquer conduta.', i: 'ear', m: 'relogio' },
+  { t: 'Exames na hora certa', d: 'Pedimos só o que muda a decisão. Nada a mais, nada a menos.', i: 'scan', m: 'capsula' },
+  { t: 'Retorno pelo celular', d: 'Dúvidas depois da consulta respondidas pelo canal da clínica.', i: 'chat', m: 'celular' },
+  { t: 'Plano por escrito', d: 'Você sai com o tratamento explicado e os próximos passos claros.', i: 'doc', m: 'prancheta' },
 ]
 const tratamentos = [
   { t: 'Consulta de avaliação', d: 'Primeira conversa completa: histórico, exame clínico e plano inicial, sem pressa.', dur: '50 min', modo: 'Presencial', img: 'avaliacao.webp' },
@@ -116,7 +110,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
               <a class="btn btn-line btn-lg" href="#tratamentos">Ver tratamentos</a>
             </div>
           </div>
-          <div class="hero-card" data-tilt>
+          <div class="hero-card">
             <img class="ph ph-portrait hero-img" :src="`${base}fotos/acompanhamento.webp`" width="1200" height="801" alt="Profissional de saúde atendendo uma criança acompanhada da mãe" fetchpriority="high">
             <div class="atend">
               <p class="atend-status" :class="{ aberto: status?.aberto }"><i />{{ status?.texto || 'Atendimento com hora marcada' }}</p>
@@ -136,8 +130,8 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
         <div class="wrap">
           <h2 class="h2">Um consultório pensado para você sair com respostas.</h2>
           <div class="cards">
-            <article v-for="d in diferenciais" :key="d.t" class="card" data-tilt>
-              <svg class="card-ic"><use :href="`#i-${d.i}`" /></svg>
+            <article v-for="d in diferenciais" :key="d.t" class="card">
+              <div class="card-3d"><Icone3D :tipo="d.m" /></div>
               <h3>{{ d.t }}</h3>
               <p>{{ d.d }}</p>
             </article>
