@@ -16,6 +16,32 @@ const site = {
 const wa = (msg = 'Olá! Quero agendar uma consulta.') =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg)}`
 
+// horário de atendimento por dia da semana (0 = domingo). null = fechado
+const horario: Record<number, [number, number] | null> = { 0: null, 1: [8, 18], 2: [8, 18], 3: [8, 18], 4: [8, 18], 5: [8, 17], 6: [8, 12] }
+const respostaWhats = 'em até 1 hora'
+
+const status = ref<{ aberto: boolean, texto: string } | null>(null)
+function calcularStatus() {
+  const dias = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado']
+  const agora = new Date(), d = agora.getDay(), h = agora.getHours() + agora.getMinutes() / 60
+  const hj = horario[d]
+  if (hj && h >= hj[0] && h < hj[1]) { status.value = { aberto: true, texto: `Aberto agora, até as ${hj[1]}h` }; return }
+  for (let i = hj && h < hj[0] ? 0 : 1; i <= 7; i++) {
+    const hh = horario[(d + i) % 7]
+    if (!hh) continue
+    status.value = { aberto: false, texto: `Fechado agora, abre ${i === 0 ? 'hoje' : i === 1 ? 'amanhã' : dias[(d + i) % 7]} às ${hh[0]}h` }
+    return
+  }
+}
+
+// profundidade 3D leve (Vanilla-Tilt) só em mouse, e nunca para quem pede menos movimento
+onMounted(async () => {
+  calcularStatus()
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const { default: VanillaTilt } = await import('vanilla-tilt')
+  VanillaTilt.init(document.querySelectorAll('[data-tilt]') as unknown as HTMLElement[], { max: 6, speed: 600, perspective: 1200, glare: true, 'max-glare': 0.12, scale: 1.01 })
+})
+
 const diferenciais = [
   { t: 'Consulta sem pressa', d: 'Tempo de verdade para ouvir sua história antes de qualquer conduta.', i: 'ear' },
   { t: 'Exames na hora certa', d: 'Pedimos só o que muda a decisão. Nada a mais, nada a menos.', i: 'scan' },
@@ -90,13 +116,16 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
               <a class="btn btn-line btn-lg" href="#tratamentos">Ver tratamentos</a>
             </div>
           </div>
-          <div class="hero-card">
+          <div class="hero-card" data-tilt>
             <img class="ph ph-portrait hero-img" :src="`${base}fotos/acompanhamento.webp`" width="1200" height="801" alt="Profissional de saúde atendendo uma criança acompanhada da mãe" fetchpriority="high">
-            <div class="slot">
-              <p class="slot-k">Próximos horários</p>
-              <div class="slot-row"><span>Ter</span><b>09:30</b><b>14:00</b><b class="off">16:30</b></div>
-              <div class="slot-row"><span>Qua</span><b>08:00</b><b class="off">11:00</b><b>15:30</b></div>
-              <a :href="wa('Olá! Vi um horário disponível no site e quero agendar.')" target="_blank" rel="noopener">Reservar pelo WhatsApp</a>
+            <div class="atend">
+              <p class="atend-status" :class="{ aberto: status?.aberto }"><i />{{ status?.texto || 'Atendimento com hora marcada' }}</p>
+              <ul>
+                <li><svg><use href="#i-chat" /></svg>Resposta no WhatsApp {{ respostaWhats }}</li>
+                <li><svg><use href="#i-scan" /></svg>Teleconsulta para retornos</li>
+                <li><svg><use href="#i-doc" /></svg>Plano de cuidado por escrito</li>
+              </ul>
+              <a :href="wa('Olá! Quero agendar uma consulta.')" target="_blank" rel="noopener">Falar com a recepção</a>
             </div>
           </div>
         </div>
@@ -107,7 +136,7 @@ const mover = (dir: number) => trilho.value?.scrollBy({ left: dir * (trilho.valu
         <div class="wrap">
           <h2 class="h2">Um consultório pensado para você sair com respostas.</h2>
           <div class="cards">
-            <article v-for="d in diferenciais" :key="d.t" class="card">
+            <article v-for="d in diferenciais" :key="d.t" class="card" data-tilt>
               <svg class="card-ic"><use :href="`#i-${d.i}`" /></svg>
               <h3>{{ d.t }}</h3>
               <p>{{ d.d }}</p>
